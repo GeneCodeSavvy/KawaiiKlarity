@@ -32,7 +32,7 @@ export default function Page() {
 
         {/* Hero Section - Centered */}
         <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-          <div className="w-full max-w-2xl text-center">
+          <div className="w-full max-w-2xl text-center p-10 bg-background border border-rose-400">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-pretty mb-6 text-primary">
               Creating win-win in debt resolution for banks & borrowers
             </h1>
