@@ -7,13 +7,17 @@ import { ChatContainerProps, Message, MessageType, MessageStatus } from "@/types
 /**
  * ChatContainer - Main layout wrapper and state orchestrator for the chat interface
  * 
+ * Refactored in Phase 3 to use the useChatMessages hook for state management.
+ * Now focuses on layout, event handling, and component integration while
+ * delegating message management to the dedicated hook.
+ * 
  * Key Features:
  * - Full viewport height layout (h-screen)
- * - Global chat state management
- * - Keyboard shortcuts (Escape to clear, Enter to send)
+ * - Multi-modal message support (text, voice, image)
+ * - Keyboard shortcuts (Escape to clear)
  * - Responsive layout adjustments for mobile/desktop
  * - Theme-aware styling with CSS variables
- * - Auto-save to sessionStorage every 30 seconds
+ * - Error handling and user feedback
  */
 
 export function ChatContainer({ 
@@ -171,7 +175,7 @@ export function ChatContainer({
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Escape to clear
+      // Escape to clear (with Ctrl/Cmd modifier)
       if (event.key === 'Escape' && (event.ctrlKey || event.metaKey)) {
         clearHistory();
       }

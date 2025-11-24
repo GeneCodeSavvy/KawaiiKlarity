@@ -34,6 +34,9 @@ export interface MessageMetadata {
   audioDuration?: number;           // Duration in seconds
   audioTranscription?: string;      // Speech-to-text result
   audioWaveform?: number[];         // Waveform data for visualization
+  audioBlob?: Blob;                 // Original audio blob for re-creating URLs if needed
+  audioMimeType?: string;           // MIME type of the audio
+  formatSupported?: boolean;        // Whether the browser can play this format
   
   // Image message data
   imageUrl?: string;                // Blob URL or server URL for image
@@ -187,7 +190,7 @@ export interface ImageLightboxProps {
 // Hook return type interfaces
 export interface UseChatMessagesReturn {
   messages: Message[];              // Current message array
-  sendMessage: (content: string, type?: MessageType) => Promise<void>;
+  sendMessage: (message: Partial<Message>) => Promise<void>;
   retryMessage: (messageId: string) => Promise<void>;
   clearHistory: () => void;         // Clear all messages
   isLoading: boolean;               // Any operation in progress
