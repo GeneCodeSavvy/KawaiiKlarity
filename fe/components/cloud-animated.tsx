@@ -25,7 +25,31 @@ interface CloudState {
     delayedCloudCount: number
 }
 
-const CLOUD_IMAGE = "/images/cloud.png"
+interface ResponsiveConfig {
+    areaRatio: number
+    linearScale: number
+    areaScale: number
+    viewportWidth: number
+    viewportHeight: number
+}
+
+const CLOUD_IMAGE_LIGHT = "/images/cloud.png"
+const CLOUD_IMAGE_DARK = "/images/cloud_dark.png"
+
+// Breakpoints for device detection
+const BREAKPOINTS = {
+    MOBILE_MAX: 768,
+    TABLET_MIN: 769,
+    DESKTOP_MIN: 1024,
+} as const
+
+// Reference baseline (13" MacBook)
+const BASELINE = {
+    WIDTH: 1440,
+    HEIGHT: 900,
+    AREA: 1440 * 900, // 1,296,000
+    BASE_WIDTH: 300, // Actual base width for 13" screen
+} as const
 
 const INITIAL_POSITIONS = [
     { leftPercent: 0.15, topPercent: 0.2 },   // Top left area
@@ -36,71 +60,208 @@ const INITIAL_POSITIONS = [
     { leftPercent: 0.85, topPercent: 0.45 },  // Right center area
 ]
 
+/**
+ * Get responsive cloud configuration based on viewport dimensions
+ * Returns null for mobile devices (no clouds)
+ */
+const getResponsiveCloudConfig = (viewportWidth: number, viewportHeight: number): ResponsiveConfig | null => {
+    // Mobile: No clouds
+    if (viewportWidth <= BREAKPOINTS.MOBILE_MAX) {
+        return null
+    }
+
+    const currentArea = viewportWidth * viewportHeight
+    const areaRatio = currentArea / BASELINE.AREA
+    const linearScale = viewportWidth / BASELINE.WIDTH
+    const areaScale = Math.sqrt(areaRatio) // sqrt prevents exponential growth on large screens
+
+    return { areaRatio, linearScale, areaScale, viewportWidth, viewportHeight }
+}
+
+/**
+ * Calculate responsive cloud counts based on viewport
+ */
+const getCloudCounts = (config: ResponsiveConfig | null): { initial: number; delayed: number } => {
+    if (!config) return { initial: 0, delayed: 0 }
+
+    // Scale cloud count based on area (with sqrt to control growth)
+    const baseTotal = 9 // Current: 6 + 3
+    const scaledTotal = Math.round(baseTotal * config.areaScale)
+    const totalClouds = Math.max(4, Math.min(18, scaledTotal)) // 4-18 range
+
+    const initialClouds = Math.ceil(totalClouds * 0.67) // Maintain 67/33 ratio
+    const delayedClouds = totalClouds - initialClouds
+
+    return { initial: initialClouds, delayed: delayedClouds }
+}
+
+/**
+ * Calculate responsive cloud dimensions
+ */
+const getCloudDimensions = (config: ResponsiveConfig | null): { baseWidth: number; baseHeight: number } => {
+    if (!config) return { baseWidth: 0, baseHeight: 0 }
+
+    // Scale base width proportionally to viewport
+    const scaledBaseWidth = BASELINE.BASE_WIDTH * config.linearScale
+
+    // Ensure minimum size but scale appropriately
+    const minWidth = Math.min(200, config.viewportWidth * 0.08)
+    const baseWidth = Math.max(minWidth, scaledBaseWidth)
+
+    // Height maintains 0.5 aspect ratio but respects viewport
+    const baseHeight = Math.min(baseWidth * 0.5, config.viewportHeight * 0.25)
+
+    return { baseWidth, baseHeight }
+}
+
+/**
+ * Get responsive animation configuration
+ */
+const getAnimationConfig = (config: ResponsiveConfig | null) => {
+    if (!config) return null
+
+    // Scale duration inversely with screen size (larger screens = faster movement)
+    const baseDurationRange = { min: 30, max: 60 } // Current: 30 + random(30)
+    const durationScale = 1 / Math.sqrt(config.linearScale) // Inverse scaling
+
+    const duration = {
+        min: baseDurationRange.min * durationScale,
+        max: baseDurationRange.max * durationScale,
+    }
+
+    // Scale opacity based on density (more clouds = slightly more transparent)
+    const baseOpacityRange = { min: 0.15, max: 0.5 }
+    const densityFactor = Math.min(1, config.areaScale) // Don't increase opacity on small screens
+
+    const opacity = {
+        min: baseOpacityRange.min * densityFactor,
+        max: baseOpacityRange.max * densityFactor,
+    }
+
+    // Adjust scale range for smaller screens
+    const scaleRange =
+        config.viewportWidth < 1000
+            ? { min: 0.5, max: 1.2 } // Smaller clouds on smaller screens
+            : { min: 0.6, max: 1.4 } // Current range
+
+    // Delay stays consistent
+    const delayRange = { min: 0.2, max: 0.5 }
+
+    return { duration, opacity, scaleRange, delayRange }
+}
+
 export default function CloudAnimated() {
     const { resolvedTheme } = useTheme()
     const [windowHeight, setWindowHeight] = useState(0)
     const [windowWidth, setWindowWidth] = useState(0)
     const [mounted, setMounted] = useState(false)
+    const [responsiveConfig, setResponsiveConfig] = useState<ResponsiveConfig | null>(null)
 
     const [cloudState, setCloudState] = useState<CloudState>({
         clouds: [],
-        initialCloudCount: 6,
+        initialCloudCount: 0,
         delayedCloudCount: 0,
     })
 
-    const generateCloud = useCallback((id: number, type: "initial" | "delayed", positionIndex?: number, iteration: number = 0): CloudInstance => {
-        const scale = 0.6 + Math.random() * 0.8
-        const baseWidth = Math.max(300, windowWidth * 0.15)
-        const width = baseWidth * scale
-        const height = width * 0.5
+    // Generate cloud with responsive properties
+    const generateCloud = useCallback(
+        (id: number, type: "initial" | "delayed", positionIndex?: number, iteration: number = 0): CloudInstance => {
+            if (!responsiveConfig) {
+                return {
+                    id,
+                    iteration,
+                    startX: 0,
+                    endX: 0,
+                    y: 0,
+                    opacity: 0,
+                    duration: 0,
+                    scale: 0,
+                    width: 0,
+                    height: 0,
+                    delay: 0,
+                    type,
+                }
+            }
 
-        const duration = 30 + Math.random() * 30
-        const opacity = 0.15 + Math.random() * 0.35
+            const animConfig = getAnimationConfig(responsiveConfig)
+            const { baseWidth } = getCloudDimensions(responsiveConfig)
 
-        let startX: number
-        let endX: number
-        let y: number
-        let delay: number
+            if (!animConfig || baseWidth === 0) {
+                return {
+                    id,
+                    iteration,
+                    startX: 0,
+                    endX: 0,
+                    y: 0,
+                    opacity: 0,
+                    duration: 0,
+                    scale: 0,
+                    width: 0,
+                    height: 0,
+                    delay: 0,
+                    type,
+                }
+            }
 
-        if (type === "initial" && positionIndex !== undefined) {
-            // Fixed aesthetic positions for initial render
-            const position = INITIAL_POSITIONS[positionIndex % INITIAL_POSITIONS.length]
-            startX = position.leftPercent * (windowWidth - width)
-            endX = windowWidth + width
-            y = position.topPercent * (windowHeight - height)
-            delay = 0
-        } else {
-            // Start from left for delayed clouds or regenerated initial clouds
-            startX = -width
-            endX = windowWidth + width
-            y = Math.random() * Math.max(0, windowHeight - height * 0.5)
-            delay = type === "delayed" ? 0.2 + Math.random() * 0.3 : 0
-        }
+            const scale = animConfig.scaleRange.min + Math.random() * (animConfig.scaleRange.max - animConfig.scaleRange.min)
+            const width = baseWidth * scale
+            const height = width * 0.5
 
-        return {
-            id,
-            iteration,
-            startX,
-            endX,
-            y,
-            opacity,
-            duration,
-            scale,
-            width,
-            height,
-            delay,
-            type,
-        }
-    }, [windowWidth, windowHeight])
+            const duration = animConfig.duration.min + Math.random() * (animConfig.duration.max - animConfig.duration.min)
+            const opacity = animConfig.opacity.min + Math.random() * (animConfig.opacity.max - animConfig.opacity.min)
+
+            let startX: number
+            let endX: number
+            let y: number
+            let delay: number
+
+            if (type === "initial" && positionIndex !== undefined) {
+                // Fixed aesthetic positions for initial render
+                const position = INITIAL_POSITIONS[positionIndex % INITIAL_POSITIONS.length]
+                startX = position.leftPercent * (windowWidth - width)
+                endX = windowWidth + width
+                y = position.topPercent * (windowHeight - height)
+                delay = 0
+            } else {
+                // Start from left for delayed clouds or regenerated initial clouds
+                startX = -width
+                endX = windowWidth + width
+                y = Math.random() * Math.max(0, windowHeight - height * 0.5)
+                delay = type === "delayed" ? animConfig.delayRange.min + Math.random() * (animConfig.delayRange.max - animConfig.delayRange.min) : 0
+            }
+
+            return {
+                id,
+                iteration,
+                startX,
+                endX,
+                y,
+                opacity,
+                duration,
+                scale,
+                width,
+                height,
+                delay,
+                type,
+            }
+        },
+        [windowWidth, windowHeight, responsiveConfig]
+    )
 
     useEffect(() => {
         setMounted(true)
-        setWindowHeight(window.innerHeight)
-        setWindowWidth(window.innerWidth)
+        const newWidth = window.innerWidth
+        const newHeight = window.innerHeight
+        setWindowHeight(newHeight)
+        setWindowWidth(newWidth)
+        setResponsiveConfig(getResponsiveCloudConfig(newWidth, newHeight))
 
         const handleResize = () => {
-            setWindowHeight(window.innerHeight)
-            setWindowWidth(window.innerWidth)
+            const resizedWidth = window.innerWidth
+            const resizedHeight = window.innerHeight
+            setWindowHeight(resizedHeight)
+            setWindowWidth(resizedWidth)
+            setResponsiveConfig(getResponsiveCloudConfig(resizedWidth, resizedHeight))
         }
 
         window.addEventListener("resize", handleResize)
@@ -109,36 +270,41 @@ export default function CloudAnimated() {
 
     // Initialize clouds with fixed aesthetic positions
     useEffect(() => {
-        if (!mounted || windowHeight === 0 || windowWidth === 0) return
+        if (!mounted || windowHeight === 0 || windowWidth === 0 || !responsiveConfig) return
 
-        const initialClouds = Array.from({ length: 6 }, (_, i) =>
+        const cloudCounts = getCloudCounts(responsiveConfig)
+
+        const initialClouds = Array.from({ length: cloudCounts.initial }, (_, i) =>
             generateCloud(i, "initial", i)
         )
 
         setCloudState(prev => ({
             ...prev,
             clouds: initialClouds,
+            initialCloudCount: cloudCounts.initial,
         }))
-    }, [mounted, windowHeight, windowWidth, generateCloud])
+    }, [mounted, windowHeight, windowWidth, responsiveConfig, generateCloud])
 
     // Add delayed clouds after 5 seconds
     useEffect(() => {
-        if (!mounted || windowHeight === 0 || windowWidth === 0 || cloudState.delayedCloudCount > 0) return
+        if (!mounted || windowHeight === 0 || windowWidth === 0 || !responsiveConfig || cloudState.delayedCloudCount > 0) return
+
+        const cloudCounts = getCloudCounts(responsiveConfig)
 
         const timer = setTimeout(() => {
-            const delayedClouds = Array.from({ length: 3 }, (_, i) =>
+            const delayedClouds = Array.from({ length: cloudCounts.delayed }, (_, i) =>
                 generateCloud(cloudState.initialCloudCount + i, "delayed")
             )
 
             setCloudState(prev => ({
                 ...prev,
                 clouds: [...prev.clouds, ...delayedClouds],
-                delayedCloudCount: 3,
+                delayedCloudCount: cloudCounts.delayed,
             }))
         }, 5000)
 
         return () => clearTimeout(timer)
-    }, [mounted, windowHeight, windowWidth, generateCloud, cloudState.delayedCloudCount, cloudState.initialCloudCount])
+    }, [mounted, windowHeight, windowWidth, responsiveConfig, generateCloud, cloudState.delayedCloudCount, cloudState.initialCloudCount])
 
     const handleCloudCycleComplete = useCallback((completedCloud: CloudInstance) => {
         setCloudState(prev => ({
@@ -151,7 +317,7 @@ export default function CloudAnimated() {
         }))
     }, [generateCloud])
 
-    if (!mounted || windowHeight === 0 || cloudState.clouds.length === 0) return null
+    if (!mounted || windowHeight === 0 || !responsiveConfig || cloudState.clouds.length === 0) return null
 
     const isDark = resolvedTheme === "dark"
 
@@ -186,7 +352,7 @@ function CloudElement({
                 width: `${cloud.width}px`,
                 height: `${cloud.height}px`,
                 opacity: isDark ? cloud.opacity * 0.5 : cloud.opacity,
-                backgroundImage: `url('${CLOUD_IMAGE}')`,
+                backgroundImage: `url('${isDark ? CLOUD_IMAGE_DARK : CLOUD_IMAGE_LIGHT}')`,
                 backgroundSize: "contain",
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
