@@ -21,7 +21,7 @@ export default function WavyMesh() {
       preserveAspectRatio="xMidYMid slice"
       viewBox="0 0 1440 900"
       style={{
-        opacity: isDark ? 0.08 : 0.12,
+        opacity: isDark ? 0.25 : 0.35,
       }}
     >
       <defs>
@@ -49,9 +49,9 @@ export default function WavyMesh() {
             <path
               d={generateSinePath(0, y, 1440, 900)}
               stroke={isDark ? "#ffffff" : "#9f7aea"}
-              strokeWidth="0.5"
+              strokeWidth="1.5"
               fill="none"
-              opacity={isDark ? "0.1" : "0.15"}
+              opacity={isDark ? "0.3" : "0.4"}
             />
           </g>
         )
