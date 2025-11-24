@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
-import { Mic, MicOff, Volume2 } from "lucide-react";
+import { Mic, MicOff, Volume2, AudioLines } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -125,10 +125,10 @@ export function ClientSpeechToText({
       size="icon"
       onClick={startListening}
       disabled={disabled}
-      className="text-muted-foreground hover:text-foreground"
+      className="text-muted-foreground hover:text-foreground hover:bg-blue-50 hover:border-blue-200 dark:hover:bg-blue-950 dark:hover:border-blue-800 transition-colors"
       title="Voice to text"
     >
-      <Mic className="w-4 h-4" />
+      <AudioLines className="w-4 h-4" />
     </Button>
   );
 }
