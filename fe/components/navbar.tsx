@@ -22,7 +22,7 @@ export default function Navbar() {
         </div>
 
         {/* Center Links - Middle Column */}
-        <div className="hidden md:flex items-center justify-center gap-8">
+        <div className="hidden md:flex items-center justify-center gap-8 ml-26">
           <a href="#product" className="text-foreground/80 hover:text-foreground transition-colors text-lg">
             Product
           </a>
