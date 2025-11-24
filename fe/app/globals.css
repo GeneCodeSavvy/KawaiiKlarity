@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -122,5 +123,13 @@
 
     body {
         @apply bg-background text-foreground;
+        font-family: 'Geist', 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+    }
+    
+    /* Optimize text rendering for Japanese characters */
+    .jp-text {
+        font-family: 'Noto Sans JP', 'Geist', system-ui, -apple-system, sans-serif;
+        font-feature-settings: "palt" 1;
+        text-rendering: optimizeLegibility;
     }
 }
