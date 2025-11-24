@@ -16,7 +16,7 @@ export default function Navbar() {
         {/* Logo - Left Column */}
         <div className="flex items-center gap-2 justify-start">
           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">K</span>
+            <span className="text-primary-foreground font-bold text-xl">K</span>
           </div>
           <span className="font-bold text-2xl text-foreground hidden sm:inline">KawaiiKlarity</span>
         </div>
