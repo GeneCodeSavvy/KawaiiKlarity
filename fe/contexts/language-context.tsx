@@ -39,7 +39,7 @@ const contentDictionary: Record<Language, Content> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [currentLang, setCurrentLang] = useState<Language>("EN")
+  const [currentLang, setCurrentLang] = useState<Language>("JP")
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   const switchLanguage = async (newLang: Language) => {
