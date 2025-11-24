@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import Link from "next/link"
 import Navbar from "@/components/navbar"
 import AnimatedBackground from "@/components/animated-background"
 import CloudAnimated from "@/components/cloud-animated"
@@ -134,17 +135,19 @@ export default function Page() {
                                     {content.lead2}
                                 </motion.p>
 
-                                <motion.button 
-                                    variants={buttonVariants}
-                                    className={`px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity ${
-                                        currentLang === "JP" ? "jp-text" : ""
-                                    }`}
-                                    aria-label={content.ctaAriaLabel}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    {content.cta}
-                                </motion.button>
+                                <Link href="/chat">
+                                    <motion.button 
+                                        variants={buttonVariants}
+                                        className={`px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity ${
+                                            currentLang === "JP" ? "jp-text" : ""
+                                        }`}
+                                        aria-label={content.ctaAriaLabel}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        {content.cta}
+                                    </motion.button>
+                                </Link>
                             </motion.div>
                         </AnimatePresence>
                     </div>
