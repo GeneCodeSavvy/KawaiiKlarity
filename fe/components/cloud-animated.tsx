@@ -33,8 +33,8 @@ interface ResponsiveConfig {
     viewportHeight: number
 }
 
-const CLOUD_IMAGE_LIGHT = "/images/cloud.png"
-const CLOUD_IMAGE_DARK = "/images/cloud_dark.png"
+const CLOUD_IMAGE_LIGHT = "/images/cloud_dark.png"
+const CLOUD_IMAGE_DARK = "/images/cloud.png"
 
 // Breakpoints for device detection
 const BREAKPOINTS = {
