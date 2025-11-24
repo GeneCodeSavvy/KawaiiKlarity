@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import ThemeToggle from "./theme-toggle"
+import { ThemeToggleEnhanced } from "./theme-toggle-enhanced"
 import LanguageSelector from "./language-selector"
 
 export default function Navbar() {
@@ -16,18 +16,18 @@ export default function Navbar() {
         {/* Logo - Left Column */}
         <div className="flex items-center gap-2 justify-start">
           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">R</span>
+            <span className="text-primary-foreground font-bold text-lg">K</span>
           </div>
-          <span className="font-bold text-2xl text-foreground hidden sm:inline">Riverline</span>
+          <span className="font-bold text-2xl text-foreground hidden sm:inline">KawaiiKlarity</span>
         </div>
 
         {/* Center Links - Middle Column */}
-        <div className="hidden md:flex items-center justify-center gap-8 ml-26">
-          <a href="#product" className="text-foreground/80 hover:text-foreground transition-colors text-lg">
-            Product
+        <div className="hidden md:flex items-center justify-center gap-8 ml-16">
+          <a href="https://github.com/GeneCodeSavvy/KawaiiKlarity" target="_blank" rel="noopener" className="text-foreground/80 hover:text-foreground transition-colors text-lg">
+            Github
           </a>
-          <a href="#pricing" className="text-foreground/80 hover:text-foreground transition-colors text-lg">
-            Pricing
+          <a href="https://resume.harsh-dev.xyz" target="_blank" rel="noopener" className="text-foreground/80 hover:text-foreground transition-colors text-lg">
+            Resume
           </a>
         </div>
 
@@ -39,7 +39,7 @@ export default function Navbar() {
           <div className="h-full flex items-center">
             <LanguageSelector />
           </div>
-          {mounted && <ThemeToggle />}
+           {mounted && <ThemeToggleEnhanced variant="circle" start="center" />}
         </div>
       </div>
     </nav>

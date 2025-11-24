@@ -9,20 +9,11 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Riverline - Debt Resolution for Banks & Borrowers",
+  title: "KawaiiKlarity - You can look Kawaii in any weather",
   description:
-    "Creating win-win in debt resolution. Increase Recovery Rates. Decrease Collection Costs. Be 100% compliant",
-  generator: "v0.app",
+    "You can't trust the weather, but you can trust Marin chan to help you look Kawaii",
   icons: {
     icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
       {
         url: "/icon.svg",
         type: "image/svg+xml",
