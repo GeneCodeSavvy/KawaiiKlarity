@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import ThemeToggle from "./theme-toggle"
+import LanguageSelector from "./language-selector"
 
 export default function Navbar() {
   const [mounted, setMounted] = useState(false)
@@ -10,31 +11,34 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className="relative z-30 w-full">
-      <div className="flex items-center justify-between px-6 sm:px-8 lg:px-12 py-4 sm:py-6">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
+    <nav className="relative z-30 w-full flex justify-center">
+      <div className="grid grid-cols-[auto_1fr_auto] items-center w-full max-w-6xl px-6 sm:px-8 lg:px-12 py-4 sm:py-6">
+        {/* Logo - Left Column */}
+        <div className="flex items-center gap-2 justify-start">
           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">R</span>
           </div>
-          <span className="font-bold text-lg text-foreground hidden sm:inline">Riverline</span>
+          <span className="font-bold text-2xl text-foreground hidden sm:inline">Riverline</span>
         </div>
 
-        {/* Center Links */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#product" className="text-foreground/80 hover:text-foreground transition-colors text-sm">
+        {/* Center Links - Middle Column */}
+        <div className="hidden md:flex items-center justify-center gap-8">
+          <a href="#product" className="text-foreground/80 hover:text-foreground transition-colors text-lg">
             Product
           </a>
-          <a href="#pricing" className="text-foreground/80 hover:text-foreground transition-colors text-sm">
+          <a href="#pricing" className="text-foreground/80 hover:text-foreground transition-colors text-lg">
             Pricing
           </a>
         </div>
 
-        {/* Right: Book Demo Button + Theme Toggle */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <button className="px-4 sm:px-6 py-2 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-primary-foreground transition-colors text-sm">
+        {/* Right: Book Demo Button + Language Selector + Theme Toggle - Right Column */}
+        <div className="flex items-center justify-end gap-3 sm:gap-4 h-10">
+          <button className="px-4 sm:px-6 py-2 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-primary-foreground transition-colors text-sm h-full flex items-center">
             Book Demo
           </button>
+          <div className="h-full flex items-center">
+            <LanguageSelector />
+          </div>
           {mounted && <ThemeToggle />}
         </div>
       </div>
