@@ -33,8 +33,8 @@ export default function Navbar() {
 
         {/* Right: Book Demo Button + Language Selector + Theme Toggle - Right Column */}
         <div className="flex items-center justify-end gap-3 sm:gap-4 h-10">
-          <button className="px-4 sm:px-6 py-2 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-primary-foreground transition-colors text-sm h-full flex items-center">
-            Book Demo
+          <button className="px-4 sm:px-6 py-2 border border-primary text-primary-foreground rounded-lg font-medium bg-primary hover:opacity-90 text-lg flex items-center">
+            Sign In
           </button>
           <div className="h-full flex items-center">
             <LanguageSelector />
