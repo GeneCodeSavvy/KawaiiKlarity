@@ -25,7 +25,8 @@ export function MessageBubble({
   message,
   showAvatar = true,
   showTimestamp = true,
-  isGrouped = false
+  isGrouped = false,
+  onDeleteMessage
 }: MessageBubbleProps): React.JSX.Element {
   
   // Determine styling based on sender
@@ -112,6 +113,15 @@ export function MessageBubble({
 
   // Message content based on type
   const renderMessageContent = () => {
+    // If message is deleted, show deletion notice
+    if (message.deletedAt) {
+      return (
+        <div className="text-sm text-muted-foreground italic">
+          This message was deleted
+        </div>
+      );
+    }
+
     switch (message.type) {
       case MessageType.TEXT:
         return (
@@ -211,11 +221,25 @@ export function MessageBubble({
       {!isUser && renderAvatar()}
       
       <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} flex-1 min-w-0`}>
-        {/* Message bubble */}
-        <div className={getBubbleClasses()}>
-          <div className={getContentPadding()}>
-            {renderMessageContent()}
+        {/* Message bubble with delete button */}
+        <div className="relative group">
+          <div className={getBubbleClasses()}>
+            <div className={getContentPadding()}>
+              {renderMessageContent()}
+            </div>
           </div>
+          
+          {/* Delete button - only show if message is not deleted and onDeleteMessage is provided */}
+          {!message.deletedAt && onDeleteMessage && (
+            <button
+              onClick={() => onDeleteMessage(message.id)}
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+              title="Delete message"
+              aria-label="Delete message"
+            >
+              ×
+            </button>
+          )}
         </div>
         
         {/* Timestamp */}

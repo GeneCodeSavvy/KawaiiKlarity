@@ -176,6 +176,17 @@ export function ChatContainer({
     setError(null);
   }, []);
 
+  // Delete message function
+  const handleDeleteMessage = useCallback((messageId: string) => {
+    setMessages(prev => 
+      prev.map(msg => 
+        msg.id === messageId 
+          ? { ...msg, deletedAt: new Date() }
+          : msg
+      )
+    );
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -193,18 +204,13 @@ export function ChatContainer({
   const _unused = { error };
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      {/* Chat Header */}
-      <ChatHeader
-        onClearHistory={clearHistory}
-        showBackButton={false}
-      />
-      
+    <div className="flex flex-col h-full bg-background">
       {/* Message List */}
       <MessageList
         messages={messages}
         isLoading={isLoading}
         autoScroll={true}
+        onDeleteMessage={handleDeleteMessage}
       />
       
       {/* Chat Input */}

@@ -21,7 +21,8 @@ export function MessageList({
   messages,
   isLoading = false,
   onLoadMore,
-  autoScroll = true
+  autoScroll = true,
+  onDeleteMessage
 }: MessageListProps): React.JSX.Element {
   
   // Refs for scroll management
@@ -191,6 +192,7 @@ export function MessageList({
                 isGrouped={message.isGrouped}
                 showAvatar={!message.isGrouped}
                 showTimestamp={true}
+                onDeleteMessage={onDeleteMessage}
               />
             ))}
           </div>

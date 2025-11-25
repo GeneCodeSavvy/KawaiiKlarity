@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { ChatContainer } from "@/components/chat/chat-container";
+import Navbar from "@/components/navbar";
 
 /**
  * Main chat page route (/chat)
@@ -19,8 +20,11 @@ import { ChatContainer } from "@/components/chat/chat-container";
  */
 export default function ChatPage(): React.JSX.Element {
   return (
-    <main className="h-screen bg-background">
-      <ChatContainer />
+    <main className="h-screen bg-background flex flex-col">
+      <Navbar />
+      <div className="flex-1">
+        <ChatContainer />
+      </div>
     </main>
   );
 }
