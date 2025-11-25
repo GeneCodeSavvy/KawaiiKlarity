@@ -100,7 +100,7 @@ export function ClientSpeechToText({
                 variant="outline"
                 size="default"
                 onClick={stopListening}
-                className="text-blue-600 hover:text-blue-700"
+                className="text-blue-600 hover:opacity-80"
               >
                 <MicOff className="w-4 h-4 mr-2" />
                 Stop
@@ -125,7 +125,7 @@ export function ClientSpeechToText({
       size="icon"
       onClick={startListening}
       disabled={disabled}
-      className="text-muted-foreground hover:text-foreground hover:bg-blue-50 hover:border-blue-200 dark:hover:bg-blue-950 dark:hover:border-blue-800 transition-colors"
+      className="text-muted-foreground hover:opacity-80 transition-opacity"
       title="Voice to text"
     >
       <AudioLines className="w-4 h-4" />

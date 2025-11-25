@@ -37,7 +37,7 @@ export function TextMessage({
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 underline underline-offset-2 hover:underline-offset-4 transition-all duration-200 break-all"
+            className="text-blue-400 hover:opacity-80 underline underline-offset-2 transition-opacity duration-200 break-all"
             onClick={(e) => e.stopPropagation()}
           >
             {part}

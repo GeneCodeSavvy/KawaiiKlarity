@@ -3,7 +3,6 @@
 import type React from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ChatContainerProps, Message, MessageType, MessageStatus } from "@/types/chat";
-import { ChatHeader } from "./chat-header";
 import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 
@@ -205,21 +204,25 @@ export function ChatContainer({
 
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Message List */}
-      <MessageList
-        messages={messages}
-        isLoading={isLoading}
-        autoScroll={true}
-        onDeleteMessage={handleDeleteMessage}
-      />
+      {/* Message List - takes remaining space and allows scrolling */}
+      <div className="flex-1 min-h-0">
+        <MessageList
+          messages={messages}
+          isLoading={isLoading}
+          autoScroll={true}
+          onDeleteMessage={handleDeleteMessage}
+        />
+      </div>
       
-      {/* Chat Input */}
-      <ChatInput
-        onSendMessage={handleSendMessage}
-        isLoading={isLoading}
-        placeholder="Type your message... (Shift+Enter for new line)"
-        maxLength={1000}
-      />
+      {/* Chat Input - fixed at bottom */}
+      <div className="flex-shrink-0">
+        <ChatInput
+          onSendMessage={handleSendMessage}
+          isLoading={isLoading}
+          placeholder="Type your message... (Shift+Enter for new line)"
+          maxLength={1000}
+        />
+      </div>
     </div>
   );
 }

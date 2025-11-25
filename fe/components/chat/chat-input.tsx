@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { Plus, Mic, Volume2 } from "lucide-react";
+import { Plus, Mic, Volume2, Send } from "lucide-react";
 import { ChatInputProps, MessageType } from "@/types/chat";
 
 // Dynamic imports for SSR compatibility with loading fallbacks
@@ -205,29 +205,13 @@ export function ChatInput({
     <div className="flex-shrink-0 bg-background">
       {/* Expandable Menu Panel */}
       {showComponents && (
-        <div className="absolute bottom-20 left-4 z-50">
-          <div 
-            className="bg-[#1E1E1E] rounded-2xl p-6 shadow-lg"
-            style={{ 
-              boxShadow: '0px 6px 24px rgba(0,0,0,0.4)' 
-            }}
-          >
-            <div className="space-y-4 min-w-[200px]">
-              <MediaUpload
-                onFilesSelected={handleImageUpload}
-                onCamera={handleCameraCapture}
-                disabled={isLoading}
-              />
-              <div 
-                className="flex items-center space-x-3 text-white hover:bg-white/10 p-3 rounded-lg cursor-pointer transition-colors"
-                onClick={() => {
-                  // Handle "Create image" - placeholder functionality
-                  setShowComponents(false);
-                }}
-              >
-                <span className="text-sm font-medium">Create image</span>
-              </div>
-            </div>
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-[#1E1E1E] rounded-xl p-3">
+            <MediaUpload
+              onFilesSelected={handleImageUpload}
+              onCamera={handleCameraCapture}
+              disabled={isLoading}
+            />
           </div>
         </div>
       )}
@@ -235,13 +219,13 @@ export function ChatInput({
       {/* Main ChatGPT-style Input Bar */}
       <div className="p-4">
         <div className="relative max-w-4xl mx-auto">
-          <div className="flex items-end bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-3xl shadow-sm focus-within:shadow-md transition-shadow">
+          <div className="flex items-end bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-3xl transition-colors">
             
             {/* Plus Button */}
             <button
               onClick={() => setShowComponents(!showComponents)}
               disabled={isLoading}
-              className="flex-shrink-0 w-[42px] h-[42px] bg-[#2A2A2A] hover:bg-[#3A3A3A] rounded-full flex items-center justify-center m-2 transition-colors disabled:opacity-50"
+              className="flex-shrink-0 w-[42px] h-[42px] bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center m-2 transition-opacity disabled:opacity-50"
             >
               <Plus className="w-5 h-5 text-white" />
             </button>
@@ -271,9 +255,9 @@ export function ChatInput({
             </div>
 
             {/* Right Side Icons */}
-            <div className="flex items-center space-x-3 pr-2">
+            <div className="flex items-center space-x-2 pr-2">
               {/* Microphone - Voice Recording */}
-              <div className="w-[42px] h-[42px] bg-[#2A2A2A] hover:bg-[#3A3A3A] rounded-full flex items-center justify-center transition-colors">
+              <div className="w-[42px] h-[42px] bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity">
                 <VoiceRecorder
                   onRecordingComplete={handleVoiceRecordingComplete}
                   disabled={isLoading}
@@ -281,13 +265,24 @@ export function ChatInput({
               </div>
 
               {/* Audio Wave - Speech to Text */}
-              <div className="w-[42px] h-[42px] bg-[#2A2A2A] hover:bg-[#3A3A3A] rounded-full flex items-center justify-center transition-colors">
+              <div className="w-[42px] h-[42px] bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity">
                 <SpeechToText
                   onTranscriptChange={handleSpeechTranscript}
                   onFinalTranscript={handleFinalSpeechTranscript}
                   disabled={isLoading}
                 />
               </div>
+
+              {/* Send Button - Only show when there's text to send */}
+              {inputText.trim() && (
+                <button
+                  onClick={handleSendText}
+                  disabled={isLoading}
+                  className="w-[42px] h-[42px] bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-full flex items-center justify-center transition-colors"
+                >
+                  <Send className="w-5 h-5 text-white" />
+                </button>
+              )}
             </div>
           </div>
         </div>

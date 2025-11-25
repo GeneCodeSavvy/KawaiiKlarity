@@ -99,7 +99,7 @@ export function ImageMessage({
         {items.length > 3 && (
           <button
             onClick={() => setShowResults(true)}
-            className="text-xs text-blue-300 hover:text-blue-200 transition-colors"
+            className="text-xs text-blue-300 hover:opacity-80 transition-opacity"
           >
             +{items.length - 3} more items
           </button>

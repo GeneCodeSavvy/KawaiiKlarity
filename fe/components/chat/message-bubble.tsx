@@ -233,7 +233,7 @@ export function MessageBubble({
           {!message.deletedAt && onDeleteMessage && (
             <button
               onClick={() => onDeleteMessage(message.id)}
-              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:opacity-80 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
               title="Delete message"
               aria-label="Delete message"
             >

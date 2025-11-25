@@ -57,7 +57,7 @@ export function MessageList({
   useEffect(() => {
     if (autoScroll && isNearBottom && !userScrolled) {
       // Use immediate scroll for the first message, smooth for subsequent ones
-      const behavior = messages.length <= 1 ? 'instant' : 'smooth';
+      const behavior: ScrollBehavior = messages.length <= 1 ? 'auto' : 'smooth';
       scrollToBottom(behavior);
     }
   }, [messages.length, autoScroll, isNearBottom, userScrolled, scrollToBottom]);
@@ -157,7 +157,7 @@ export function MessageList({
   const groupedMessages = getGroupedMessages();
 
   return (
-    <div className="flex-1 relative overflow-hidden">
+    <div className="h-full relative overflow-hidden">
       {/* Messages container */}
       <div
         ref={containerRef}

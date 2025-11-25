@@ -3,6 +3,9 @@
 import type React from "react";
 import { ChatContainer } from "@/components/chat/chat-container";
 import Navbar from "@/components/navbar";
+import AnimatedBackground from "@/components/animated-background";
+import CloudAnimated from "@/components/cloud-animated";
+import WavyMesh from "@/components/wavy-mesh";
 
 /**
  * Main chat page route (/chat)
@@ -20,10 +23,22 @@ import Navbar from "@/components/navbar";
  */
 export default function ChatPage(): React.JSX.Element {
   return (
-    <main className="h-screen bg-background flex flex-col">
-      <Navbar />
-      <div className="flex-1">
-        <ChatContainer />
+    <main className="relative w-full h-screen bg-background">
+      {/* Layer 0: Gradient Background */}
+      <AnimatedBackground />
+
+      {/* Layer 10: Clouds */}
+      <CloudAnimated />
+
+      {/* Layer 20: Wavy Mesh */}
+      <WavyMesh />
+
+      {/* Layer 30: Content */}
+      <div className="relative z-30 w-full h-full flex flex-col">
+        <Navbar />
+        <div className="flex-1 min-h-0">
+          <ChatContainer />
+        </div>
       </div>
     </main>
   );

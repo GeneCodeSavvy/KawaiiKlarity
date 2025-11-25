@@ -114,7 +114,7 @@ export function ClientVoiceRecorder({
                 variant="default"
                 size="default"
                 onClick={stopRecording}
-                className="bg-red-600 hover:bg-red-700 text-white shadow-md"
+                className="bg-red-600 text-white shadow-md"
               >
                 <Square className="w-4 h-4 mr-2" />
                 Stop Recording
@@ -156,7 +156,7 @@ export function ClientVoiceRecorder({
                 variant="outline"
                 size="icon"
                 onClick={handleClear}
-                className="text-red-600 hover:text-red-700"
+                className="text-red-600 hover:opacity-80"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
@@ -182,7 +182,7 @@ export function ClientVoiceRecorder({
       size="icon"
       onClick={startRecording}
       disabled={disabled || isRecording}
-      className="text-muted-foreground hover:text-foreground hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950 dark:hover:border-red-800 transition-colors"
+      className="text-muted-foreground hover:opacity-80 transition-opacity"
       title="Record voice message"
     >
       <Mic className="w-4 h-4" />

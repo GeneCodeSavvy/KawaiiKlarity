@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import Webcam from "react-webcam";
 import { Upload, Camera, X, Image as ImageIcon, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface MediaUploadProps {
@@ -67,13 +67,12 @@ export function MediaUpload({
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Take Photo</CardTitle>
-            <Button
-              variant="outline"
-              size="icon"
+            <button
               onClick={() => setShowCamera(false)}
+              className="w-8 h-8 bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity"
             >
-              <X className="w-4 h-4" />
-            </Button>
+              <X className="w-4 h-4 text-white" />
+            </button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -86,20 +85,19 @@ export function MediaUpload({
             />
           </div>
           <div className="flex justify-center space-x-3">
-            <Button
-              variant="outline"
+            <button
               onClick={() => setShowCamera(false)}
+              className="px-4 py-2 bg-[#2A2A2A] hover:opacity-80 rounded-lg text-white transition-opacity"
             >
               Cancel
-            </Button>
-            <Button
-              variant="default"
+            </button>
+            <button
               onClick={capturePhoto}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="px-4 py-2 bg-[#2A2A2A] hover:opacity-80 rounded-lg text-white transition-opacity flex items-center space-x-2"
             >
-              <Camera className="w-4 h-4 mr-2" />
-              Capture
-            </Button>
+              <Camera className="w-4 h-4" />
+              <span>Capture</span>
+            </button>
           </div>
         </CardContent>
       </Card>
@@ -113,13 +111,12 @@ export function MediaUpload({
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">Upload Images</CardTitle>
-            <Button
-              variant="outline"
-              size="icon"
+            <button
               onClick={() => setShowDropzone(false)}
+              className="w-8 h-8 bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity"
             >
-              <X className="w-4 h-4" />
-            </Button>
+              <X className="w-4 h-4 text-white" />
+            </button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -129,8 +126,8 @@ export function MediaUpload({
             className={`
               border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
               ${isDragActive 
-                ? 'border-blue-400 bg-blue-50' 
-                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                ? 'border-gray-500 bg-gray-100 dark:border-gray-400 dark:bg-gray-800' 
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800'
               }
               ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
             `}
@@ -163,14 +160,12 @@ export function MediaUpload({
                 <h4 className="font-medium text-gray-900">
                   Selected Images ({selectedFiles.length}/{maxFiles})
                 </h4>
-                <Button
-                  variant="outline"
-                  size="default"
+                <button
                   onClick={clearAll}
-                  className="text-red-600 hover:text-red-700"
+                  className="px-3 py-1 bg-[#2A2A2A] hover:opacity-80 rounded-lg text-white text-sm transition-opacity"
                 >
                   Clear All
-                </Button>
+                </button>
               </div>
               
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -186,14 +181,12 @@ export function MediaUpload({
                           onLoad={() => URL.revokeObjectURL(previewUrl)}
                         />
                       </div>
-                      <Button
-                        variant="outline"
-                        size="icon"
+                      <button
                         onClick={() => removeFile(index)}
-                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#2A2A2A] text-white hover:opacity-80 opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <X className="w-3 h-3" />
-                      </Button>
+                      </button>
                       <div className="absolute bottom-1 left-1 right-1">
                         <div className="bg-black/50 text-white text-xs px-2 py-1 rounded truncate">
                           {file.name}
@@ -207,24 +200,22 @@ export function MediaUpload({
           )}
 
           <div className="flex justify-between">
-            <Button
-              variant="outline"
+            <button
               onClick={() => setShowCamera(true)}
-              className="flex items-center space-x-2"
+              className="px-4 py-2 bg-[#2A2A2A] hover:opacity-80 rounded-lg text-white transition-opacity flex items-center space-x-2"
             >
               <Camera className="w-4 h-4" />
               <span>Take Photo</span>
-            </Button>
+            </button>
             
             {selectedFiles.length > 0 && (
-              <Button
-                variant="default"
+              <button
                 onClick={() => setShowDropzone(false)}
-                className="bg-green-600 hover:bg-green-700"
+                className="px-4 py-2 bg-[#2A2A2A] hover:opacity-80 rounded-lg text-white transition-opacity flex items-center space-x-2"
               >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Done ({selectedFiles.length})
-              </Button>
+                <CheckCircle className="w-4 h-4" />
+                <span>Done ({selectedFiles.length})</span>
+              </button>
             )}
           </div>
         </CardContent>
@@ -235,26 +226,22 @@ export function MediaUpload({
   // Initial buttons
   return (
     <div className="flex space-x-2">
-      <Button
-        variant="outline"
-        size="icon"
+      <button
         onClick={() => setShowDropzone(true)}
         disabled={disabled}
-        className="text-muted-foreground hover:text-foreground"
+        className="w-10 h-10 bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity disabled:opacity-50"
         title="Upload images"
       >
-        <Upload className="w-4 h-4" />
-      </Button>
-      <Button
-        variant="outline"
-        size="icon"
+        <Upload className="w-4 h-4 text-white" />
+      </button>
+      <button
         onClick={() => setShowCamera(true)}
         disabled={disabled}
-        className="text-muted-foreground hover:text-foreground"
+        className="w-10 h-10 bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity disabled:opacity-50"
         title="Take photo"
       >
-        <Camera className="w-4 h-4" />
-      </Button>
+        <Camera className="w-4 h-4 text-white" />
+      </button>
     </div>
   );
 }
