@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useCallback, useRef } from "react";
-import { ChatContainer } from "@/components/chat/chat-container";
+import { ChatContainer } from "@/components/chat/chat-container-new";
 import Navbar from "@/components/navbar";
 import AnimatedBackground from "@/components/animated-background";
 import CloudAnimated from "@/components/cloud-animated";

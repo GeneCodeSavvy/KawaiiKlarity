@@ -239,7 +239,7 @@ export function ChatInput({
             <button
               onClick={() => setShowComponents(!showComponents)}
               disabled={isLoading}
-              className="flex-shrink-0 w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center m-2 transition-colors disabled:opacity-50"
+              className="flex-shrink-0 w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center m-2 transition-colors disabled:opacity-50 border border-gray-300"
             >
               <Plus className="w-5 h-5 text-white dark:text-[#F5F7FA]" />
             </button>
@@ -271,7 +271,7 @@ export function ChatInput({
             {/* Right Side Icons */}
             <div className="flex items-center space-x-2 p-2">
               {/* Microphone - Voice Recording */}
-              <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center transition-colors">
+              <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center transition-colors border border-gray-300">
                 <VoiceRecorder
                   onRecordingComplete={handleVoiceRecordingComplete}
                   disabled={isLoading}
@@ -279,7 +279,7 @@ export function ChatInput({
               </div>
 
               {/* Audio Wave - Speech to Text */}
-              <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center transition-colors">
+              <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center transition-colors border border-white border-opacity-25">
                 <SpeechToText
                   onTranscriptChange={handleSpeechTranscript}
                   onFinalTranscript={handleFinalSpeechTranscript}
