@@ -280,7 +280,7 @@ export function ChatInput({
                   disabled={isLoading}
                   className="w-[42px] h-[42px] bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-full flex items-center justify-center transition-colors"
                 >
-                  <Send className="w-5 h-5 text-white" />
+                  <Send className="w-5 h-5 text-white transform -translate-x-0.25 " />
                 </button>
               )}
             </div>
