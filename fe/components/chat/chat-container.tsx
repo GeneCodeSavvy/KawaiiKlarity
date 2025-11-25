@@ -29,6 +29,7 @@ export function ChatContainer({
   // State management
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
+  const [waitingForBotResponse, setWaitingForBotResponse] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   // Refs for auto-save and DOM manipulation
@@ -117,6 +118,7 @@ export function ChatContainer({
     // Optimistic update
     setMessages(prev => [...prev, newMessage]);
     setIsLoading(true);
+    setWaitingForBotResponse(true);
     setError(null);
 
     // Notify parent component
@@ -147,6 +149,7 @@ export function ChatContainer({
             };
 
             setMessages(prev => [...prev, response]);
+            setWaitingForBotResponse(false);
             onNewMessage?.(response);
           }, 1500 + Math.random() * 1000); // Random delay for realistic feel
         }
@@ -163,6 +166,7 @@ export function ChatContainer({
         )
       );
       setError('Failed to send message. Please try again.');
+      setWaitingForBotResponse(false);
     } finally {
       setIsLoading(false);
     }
@@ -173,6 +177,7 @@ export function ChatContainer({
     setMessages([]);
     sessionStorage.removeItem('chat-messages');
     setError(null);
+    setWaitingForBotResponse(false);
   }, []);
 
   // Delete message function
@@ -218,7 +223,7 @@ export function ChatContainer({
       <div className="flex-shrink-0">
         <ChatInput
           onSendMessage={handleSendMessage}
-          isLoading={isLoading}
+          isLoading={isLoading || waitingForBotResponse}
           placeholder="Type your message... (Shift+Enter for new line)"
           maxLength={1000}
         />

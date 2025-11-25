@@ -190,7 +190,7 @@ export function MessageList({
                 key={message.id}
                 message={message}
                 isGrouped={message.isGrouped}
-                showAvatar={!message.isGrouped}
+                showAvatar={false}
                 showTimestamp={true}
                 onDeleteMessage={onDeleteMessage}
               />

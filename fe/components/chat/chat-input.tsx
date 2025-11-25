@@ -255,7 +255,7 @@ export function ChatInput({
             </div>
 
             {/* Right Side Icons */}
-            <div className="flex items-center space-x-2 pr-2">
+            <div className="flex items-center space-x-2 p-2">
               {/* Microphone - Voice Recording */}
               <div className="w-[42px] h-[42px] bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity">
                 <VoiceRecorder
