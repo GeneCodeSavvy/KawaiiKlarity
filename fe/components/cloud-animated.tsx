@@ -351,7 +351,7 @@ function CloudElement({
                 top: `${cloud.y}px`,
                 width: `${cloud.width}px`,
                 height: `${cloud.height}px`,
-                opacity: isDark ? cloud.opacity * 0.5 : cloud.opacity,
+                opacity: isDark ? cloud.opacity * 0.5 : Math.min(cloud.opacity * 2.5, 1.0),
                 backgroundImage: `url('${isDark ? CLOUD_IMAGE_DARK : CLOUD_IMAGE_LIGHT}')`,
                 backgroundSize: "contain",
                 backgroundRepeat: "no-repeat",
@@ -364,7 +364,7 @@ function CloudElement({
 
                 filter: isDark
                     ? "brightness(1.2) contrast(0.8) blur(0.5px) saturate(0.9)"
-                    : "brightness(1) contrast(1.05) saturate(1.3) hue-rotate(200deg) blur(3px)",
+                    : "brightness(0.9) contrast(1.2) blur(1px) drop-shadow(0 0 1px rgba(0,0,0,0.25))",
             }}
             initial={{ x: cloud.startX }}
             animate={{ x: cloud.endX }}
