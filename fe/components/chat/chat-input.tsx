@@ -11,8 +11,8 @@ const VoiceRecorder = dynamic(() =>
   { 
     ssr: false, 
     loading: () => (
-      <div className="w-[42px] h-[42px] bg-[#2A2A2A] rounded-full flex items-center justify-center animate-pulse">
-        <span className="w-4 h-4 bg-gray-500 rounded-sm" />
+      <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] rounded-full flex items-center justify-center animate-pulse">
+        <span className="w-4 h-4 bg-gray-400 dark:bg-[#AEB7C3] rounded-sm" />
       </div>
     )
   }
@@ -23,8 +23,8 @@ const SpeechToText = dynamic(() =>
   { 
     ssr: false,
     loading: () => (
-      <div className="w-[42px] h-[42px] bg-[#2A2A2A] rounded-full flex items-center justify-center animate-pulse">
-        <span className="w-4 h-4 bg-gray-500 rounded-sm" />
+      <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] rounded-full flex items-center justify-center animate-pulse">
+        <span className="w-4 h-4 bg-gray-400 dark:bg-[#AEB7C3] rounded-sm" />
       </div>
     )
   }
@@ -35,8 +35,8 @@ const MediaUpload = dynamic(() =>
   { 
     ssr: false,
     loading: () => (
-      <div className="w-[42px] h-[42px] bg-[#2A2A2A] rounded-full flex items-center justify-center animate-pulse">
-        <span className="w-4 h-4 bg-gray-500 rounded-sm" />
+      <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] rounded-full flex items-center justify-center animate-pulse">
+        <span className="w-4 h-4 bg-gray-400 dark:bg-[#AEB7C3] rounded-sm" />
       </div>
     )
   }
@@ -207,7 +207,7 @@ export function ChatInput({
       {/* Expandable Menu Panel */}
       {showComponents && (
         <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-[#1E1E1E] rounded-xl p-3">
+          <div className="bg-white dark:bg-[#1E2634] border border-gray-200 dark:border-[#364055] rounded-xl p-3">
             <MediaUpload
               onFilesSelected={handleImageUpload}
               onCamera={handleCameraCapture}
@@ -239,9 +239,9 @@ export function ChatInput({
             <button
               onClick={() => setShowComponents(!showComponents)}
               disabled={isLoading}
-              className="flex-shrink-0 w-[42px] h-[42px] bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center m-2 transition-opacity disabled:opacity-50"
+              className="flex-shrink-0 w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center m-2 transition-colors disabled:opacity-50"
             >
-              <Plus className="w-5 h-5 text-white" />
+              <Plus className="w-5 h-5 text-white dark:text-[#F5F7FA]" />
             </button>
 
             {/* Text Input Area */}
@@ -271,7 +271,7 @@ export function ChatInput({
             {/* Right Side Icons */}
             <div className="flex items-center space-x-2 p-2">
               {/* Microphone - Voice Recording */}
-              <div className="w-[42px] h-[42px] bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity">
+              <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center transition-colors">
                 <VoiceRecorder
                   onRecordingComplete={handleVoiceRecordingComplete}
                   disabled={isLoading}
@@ -279,7 +279,7 @@ export function ChatInput({
               </div>
 
               {/* Audio Wave - Speech to Text */}
-              <div className="w-[42px] h-[42px] bg-[#2A2A2A] hover:opacity-80 rounded-full flex items-center justify-center transition-opacity">
+              <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] rounded-full flex items-center justify-center transition-colors">
                 <SpeechToText
                   onTranscriptChange={handleSpeechTranscript}
                   onFinalTranscript={handleFinalSpeechTranscript}
@@ -292,9 +292,9 @@ export function ChatInput({
                 <button
                   onClick={handleSendText}
                   disabled={isLoading}
-                  className="w-[42px] h-[42px] bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-full flex items-center justify-center transition-colors"
+                  className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] hover:bg-gray-600 dark:hover:bg-[#2A3344] dark:border dark:border-[#364055] disabled:opacity-50 rounded-full flex items-center justify-center transition-colors"
                 >
-                  <Send className="w-5 h-5 text-white transform -translate-x-0.25 " />
+                  <Send className="w-5 h-5 text-white dark:text-[#F5F7FA] transform -translate-x-0.25 " />
                 </button>
               )}
             </div>

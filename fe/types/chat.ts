@@ -122,6 +122,7 @@ export interface ChatSession {
 export interface ChatContainerProps {
   initialMessages?: Message[];      // Pre-loaded message history
   onNewMessage?: (message: Message) => void; // Message event handler
+  onClearChat?: () => void;         // Clear chat history callback
 }
 
 export interface ChatHeaderProps {
@@ -172,6 +173,7 @@ export interface ChatInputProps {
   isLoading?: boolean;              // Disable input during processing
   placeholder?: string;             // Input placeholder text
   maxLength?: number;               // Text input character limit
+  onNewChat?: () => void;           // New chat button callback
 }
 
 export interface TypingIndicatorProps {
