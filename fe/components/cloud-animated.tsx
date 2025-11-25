@@ -121,7 +121,7 @@ const getAnimationConfig = (config: ResponsiveConfig | null) => {
     if (!config) return null
 
     // Scale duration inversely with screen size (larger screens = faster movement)
-    const baseDurationRange = { min: 30, max: 60 } // Current: 30 + random(30)
+    const baseDurationRange = { min: 120, max: 240 } // Super slow: 2-4 minutes per cloud
     const durationScale = 1 / Math.sqrt(config.linearScale) // Inverse scaling
 
     const duration = {
