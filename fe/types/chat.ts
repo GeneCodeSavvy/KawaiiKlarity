@@ -60,6 +60,7 @@ export interface Message {
   type: MessageType;                // Content type discriminator
   metadata?: MessageMetadata;       // Type-specific additional data
   status?: MessageStatus;           // Delivery/processing status
+  deletedAt?: Date;                 // Timestamp when message was deleted
 }
 
 export interface WeatherForecast {
@@ -124,7 +125,6 @@ export interface ChatContainerProps {
 }
 
 export interface ChatHeaderProps {
-  onClearHistory?: () => void;      // Clear chat history callback
   showBackButton?: boolean;         // Show navigation to landing page
   weatherData?: WeatherData;        // Current weather display
 }
@@ -134,6 +134,7 @@ export interface MessageListProps {
   isLoading?: boolean;              // Show loading skeleton
   onLoadMore?: () => void;          // Infinite scroll callback
   autoScroll?: boolean;             // Auto-scroll to bottom
+  onDeleteMessage?: (messageId: string) => void; // Delete message callback
 }
 
 export interface MessageBubbleProps {
@@ -141,6 +142,7 @@ export interface MessageBubbleProps {
   showAvatar?: boolean;             // Display sender avatar
   showTimestamp?: boolean;          // Display message time
   isGrouped?: boolean;              // Part of grouped messages
+  onDeleteMessage?: (messageId: string) => void; // Delete message callback
 }
 
 export interface TextMessageProps {

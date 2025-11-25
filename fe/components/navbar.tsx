@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { ThemeToggleEnhanced } from "./theme-toggle-enhanced"
 import LanguageSelector from "./language-selector"
 
@@ -14,12 +15,12 @@ export default function Navbar() {
     <nav className="relative z-30 w-full flex justify-center">
       <div className="grid grid-cols-[auto_1fr_auto] items-center w-full max-w-6xl px-6 sm:px-8 lg:px-12 py-4 sm:py-6">
         {/* Logo - Left Column */}
-        <div className="flex items-center gap-2 justify-start">
+        <Link href="/" className="flex items-center gap-2 justify-start hover:opacity-80 transition-opacity">
           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-xl">K</span>
           </div>
           <span className="font-bold text-2xl text-foreground hidden sm:inline">KawaiiKlarity</span>
-        </div>
+        </Link>
 
         {/* Center Links - Middle Column */}
         <div className="hidden md:flex items-center justify-center gap-8 ml-16">
