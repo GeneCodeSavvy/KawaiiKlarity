@@ -1,22 +1,23 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Play, Pause, Download, Volume2, VolumeX, RotateCcw } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VoiceMessageProps } from "@/types/chat";
 
 /**
- * VoiceMessage - Audio playback with controls and transcription
+ * VoiceMessage - Simplified audio playback component
  * 
  * This component handles voice message rendering with:
- * - Custom audio controls (play/pause, progress, time)
+ * - Play/pause controls with visual feedback
+ * - Progress bar with seek functionality
+ * - Duration and current time display
  * - Waveform visualization (if data available)
  * - Transcription display (collapsible)
- * - Download audio file option
  * - Format compatibility checking
  * - Error handling for unsupported formats
  * - Loading states during audio processing
- * - Accessibility support (keyboard controls, screen readers)
+ * - Clean, minimal UI design
  */
 
 export function VoiceMessage({
@@ -33,8 +34,6 @@ export function VoiceMessage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [showTranscription, setShowTranscription] = useState(false);
-  const [volume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
 
   // Refs
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -79,9 +78,7 @@ export function VoiceMessage({
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('loadstart', handleLoadStart);
 
-    // Set volume
-    audio.volume = volume;
-    audio.muted = isMuted;
+
 
     return () => {
       audio.removeEventListener('canplay', handleCanPlay);
@@ -90,7 +87,7 @@ export function VoiceMessage({
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('loadstart', handleLoadStart);
     };
-  }, [audioUrl, autoPlay, volume, isMuted]);
+  }, [audioUrl, autoPlay]);
 
   // Play/pause control
   const handlePlay = () => {
@@ -124,37 +121,11 @@ export function VoiceMessage({
     setCurrentTime(newTime);
   };
 
-  // Download audio
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = audioUrl;
-    link.download = `voice-message-${Date.now()}.webm`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
-  // Toggle mute
-  const handleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
 
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    audio.muted = newMuted;
-  };
 
-  // Restart audio
-  const handleRestart = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
 
-    audio.currentTime = 0;
-    setCurrentTime(0);
-    if (isPlaying) {
-      audio.play();
-    }
-  };
+
 
   // Format time helper
   const formatTime = (seconds: number) => {
@@ -203,72 +174,32 @@ export function VoiceMessage({
 
       {/* Main player controls */}
       <div className="bg-secondary/50 rounded-lg p-3 space-y-3">
-        {/* Top row - Play button and info */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handlePlay}
-              disabled={isLoading || hasError}
-              className="w-10 h-10 flex-shrink-0"
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {isLoading ? (
-                <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
-              ) : isPlaying ? (
-                <Pause className="w-4 h-4" />
-              ) : (
-                <Play className="w-4 h-4 ml-0.5" />
-              )}
-            </Button>
+        {/* Play button and info */}
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handlePlay}
+            disabled={isLoading || hasError}
+            className="w-10 h-10 flex-shrink-0"
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isLoading ? (
+              <div className="w-4 h-4 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
+            ) : isPlaying ? (
+              <Pause className="w-4 h-4" />
+            ) : (
+              <Play className="w-4 h-4 ml-0.5" />
+            )}
+          </Button>
 
-            <div className="min-w-0">
-              <div className="text-sm font-medium text-foreground">
-                Voice message
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-medium text-foreground">
+              Voice message
             </div>
-          </div>
-
-          <div className="flex items-center space-x-1">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleMute}
-              className="w-8 h-8"
-              title={isMuted ? "Unmute" : "Mute"}
-            >
-              {isMuted ? (
-                <VolumeX className="w-3 h-3" />
-              ) : (
-                <Volume2 className="w-3 h-3" />
-              )}
-            </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleRestart}
-              disabled={isLoading || hasError}
-              className="w-8 h-8"
-              title="Restart"
-            >
-              <RotateCcw className="w-3 h-3" />
-            </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleDownload}
-              disabled={hasError}
-              className="w-8 h-8"
-              title="Download"
-            >
-              <Download className="w-3 h-3" />
-            </Button>
+            <div className="text-xs text-muted-foreground">
+              {formatTime(currentTime)} / {formatTime(duration)}
+            </div>
           </div>
         </div>
 

@@ -24,7 +24,8 @@ import { ChatInput } from "./chat-input";
 
 export function ChatContainer({ 
   initialMessages = [], 
-  onNewMessage 
+  onNewMessage,
+  onClearChat
 }: ChatContainerProps): React.JSX.Element {
   // State management
   const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -178,7 +179,8 @@ export function ChatContainer({
     sessionStorage.removeItem('chat-messages');
     setError(null);
     setWaitingForBotResponse(false);
-  }, []);
+    onClearChat?.();
+  }, [onClearChat]);
 
   // Delete message function
   const handleDeleteMessage = useCallback((messageId: string) => {
@@ -226,6 +228,7 @@ export function ChatContainer({
           isLoading={isLoading || waitingForBotResponse}
           placeholder="Type your message... (Shift+Enter for new line)"
           maxLength={1000}
+          onNewChat={clearHistory}
         />
       </div>
     </div>

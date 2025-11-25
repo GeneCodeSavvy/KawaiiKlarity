@@ -2,9 +2,7 @@
 
 import { useEffect } from "react";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
-import { Mic, MicOff, Volume2, AudioLines } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { AudioLines, MicOff } from "lucide-react";
 
 interface ClientSpeechToTextProps {
   onTranscriptChange?: (transcript: string) => void;
@@ -54,81 +52,50 @@ export function ClientSpeechToText({
     SpeechRecognition.stopListening();
   };
 
-  if (!browserSupportsSpeechRecognition) {
-    return (
-      <Card className="w-full">
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-3 text-muted-foreground">
-            <Volume2 className="w-5 h-5" />
-            <span className="text-sm">
-              Speech recognition not supported in this browser
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  const handleClick = () => {
+    if (listening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
 
-  if (!isMicrophoneAvailable) {
+  // If browser doesn't support speech recognition or mic not available, show disabled state
+  if (!browserSupportsSpeechRecognition || !isMicrophoneAvailable) {
     return (
-      <Card className="w-full">
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-3 text-red-600">
-            <MicOff className="w-5 h-5" />
-            <span className="text-sm">
-              Microphone not available. Please check permissions.
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (listening) {
-    return (
-      <Card className="w-full">
-        <CardContent className="p-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse" />
-                <span className="text-sm font-medium text-blue-600">
-                  Listening...
-                </span>
-              </div>
-              <Button
-                variant="outline"
-                size="default"
-                onClick={stopListening}
-                className="text-blue-600 hover:opacity-80"
-              >
-                <MicOff className="w-4 h-4 mr-2" />
-                Stop
-              </Button>
-            </div>
-            {transcript && (
-              <div className="p-3 bg-muted/50 rounded-lg border">
-                <p className="text-sm text-foreground">
-                  {transcript}
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <button
+        disabled={true}
+        className="w-4 h-4 flex items-center justify-center text-gray-400 cursor-not-allowed"
+        title={
+          !browserSupportsSpeechRecognition 
+            ? "Speech recognition not supported in this browser"
+            : "Microphone not available. Please check permissions."
+        }
+      >
+        <MicOff className="w-4 h-4" />
+      </button>
     );
   }
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={startListening}
+    <button
+      onClick={handleClick}
       disabled={disabled}
-      className="text-muted-foreground hover:opacity-80 transition-opacity"
-      title="Voice to text"
+      className={`
+        w-4 h-4 flex items-center justify-center transition-colors
+        ${listening 
+          ? 'text-blue-500 animate-pulse' 
+          : 'text-white hover:text-gray-300'
+        }
+        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+      `}
+      title={listening ? "Stop listening" : "Voice to text"}
     >
-      <AudioLines className="w-4 h-4" />
-    </Button>
+      {listening ? (
+        <MicOff className="w-4 h-4" />
+      ) : (
+        <AudioLines className="w-4 h-4" />
+      )}
+    </button>
   );
 }

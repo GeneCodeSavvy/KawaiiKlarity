@@ -61,7 +61,8 @@ export function ChatInput({
   onSendMessage,
   isLoading = false,
   placeholder = "Type your message... (Shift+Enter for new line)",
-  maxLength = 1000
+  maxLength = 1000,
+  onNewChat
 }: ChatInputProps): React.JSX.Element {
   
   // Input state
@@ -219,7 +220,20 @@ export function ChatInput({
       {/* Main ChatGPT-style Input Bar */}
       <div className="p-4">
         <div className="relative max-w-4xl mx-auto">
-          <div className="flex items-end bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-3xl transition-colors">
+          <div className="flex items-center gap-3">
+            {/* New Chat Button */}
+            {onNewChat && (
+              <button
+                onClick={onNewChat}
+                className="flex-shrink-0 border border-primary/20 hover:border-primary/40 hover:drop-shadow-[0_0_12px_var(--color-primary)] group inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 px-4 py-2 text-base gap-2 bg-background"
+              >
+                <span>+</span>
+                <span className="hidden sm:inline">New Chat</span>
+              </button>
+            )}
+            
+            {/* Chat Input Container */}
+            <div className="flex-1 flex items-end bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-3xl transition-colors">
             
             {/* Plus Button */}
             <button
@@ -287,6 +301,7 @@ export function ChatInput({
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
