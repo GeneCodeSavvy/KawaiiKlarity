@@ -16,6 +16,9 @@ const buttonVariants = cva(
         // Exact match for current sign in button styling
         default:
           'border border-primary text-primary-foreground bg-primary hover:opacity-90',
+        // Ghost variant for subtle buttons
+        ghost:
+          'hover:bg-accent hover:text-accent-foreground',
       },
       size: {
         // Exact match for theme toggle dimensions

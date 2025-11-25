@@ -69,10 +69,10 @@ export function ClientVoiceRecorder({
       onClick={handleClick}
       disabled={disabled}
       className={`
-        w-4 h-4 flex items-center justify-center transition-colors
+        flex items-center gap-2 px-3 py-2 rounded-lg transition-colors
         ${isRecording 
-          ? 'text-red-500 animate-pulse' 
-          : 'text-white hover:text-gray-300'
+          ? 'bg-red-500 text-white animate-pulse' 
+          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
       `}
@@ -83,6 +83,7 @@ export function ClientVoiceRecorder({
       ) : (
         <Mic className="w-4 h-4" />
       )}
+      <span className="text-sm">{isRecording ? "Stop" : "Voice"}</span>
     </button>
   );
 }

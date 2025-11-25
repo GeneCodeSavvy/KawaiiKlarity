@@ -65,7 +65,7 @@ export function ClientSpeechToText({
     return (
       <button
         disabled={true}
-        className="w-4 h-4 flex items-center justify-center text-gray-400 cursor-not-allowed"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-400 cursor-not-allowed opacity-50"
         title={
           !browserSupportsSpeechRecognition 
             ? "Speech recognition not supported in this browser"
@@ -73,6 +73,7 @@ export function ClientSpeechToText({
         }
       >
         <MicOff className="w-4 h-4" />
+        <span className="text-sm">Dictate</span>
       </button>
     );
   }
@@ -82,10 +83,10 @@ export function ClientSpeechToText({
       onClick={handleClick}
       disabled={disabled}
       className={`
-        w-4 h-4 flex items-center justify-center transition-colors
+        flex items-center gap-2 px-3 py-2 rounded-lg transition-colors
         ${listening 
-          ? 'text-blue-500 animate-pulse' 
-          : 'text-white hover:text-gray-300'
+          ? 'bg-blue-500 text-white animate-pulse' 
+          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
       `}
@@ -96,6 +97,7 @@ export function ClientSpeechToText({
       ) : (
         <AudioLines className="w-4 h-4" />
       )}
+      <span className="text-sm">{listening ? "Stop" : "Dictate"}</span>
     </button>
   );
 }

@@ -2,26 +2,31 @@
 
 import React, { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
+import Webcam from "react-webcam";
+import { useRef } from "react";
 
-const PlusIcon = () => (
+
+
+const CameraIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 5v14M5 12h14"/>
+    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+    <circle cx="12" cy="13" r="3"/>
   </svg>
 );
 
-const GlobeIcon = () => (
+
+
+const FileIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-    <path d="M2 12h20"/>
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+    <polyline points="14,2 14,8 20,8"/>
   </svg>
 );
+
+
+
 import {
   PromptInput,
-  PromptInputActionAddAttachments,
-  PromptInputActionMenu,
-  PromptInputActionMenuContent,
-  PromptInputActionMenuTrigger,
   PromptInputAttachment,
   PromptInputAttachments,
   PromptInputBody,
@@ -32,6 +37,7 @@ import {
   PromptInputTextarea,
   PromptInputFooter,
   PromptInputTools,
+  usePromptInputAttachments,
 } from '@/components/ai-elements/prompt-input';
 import { ChatInputProps, MessageType } from "@/types/chat";
 
@@ -60,37 +66,40 @@ const SpeechToText = dynamic(() =>
   }
 );
 
-const MediaUpload = dynamic(() => 
-  import("./media-upload").then(mod => ({ default: mod.MediaUpload })), 
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="w-[42px] h-[42px] bg-gray-700 dark:bg-[#1E2634] rounded-full flex items-center justify-center animate-pulse">
-        <span className="w-4 h-4 bg-gray-400 dark:bg-[#AEB7C3] rounded-sm" />
-      </div>
-    )
-  }
-);
+// File Upload Button Component
+function FileUploadButton({ disabled }: { disabled?: boolean }) {
+  const attachments = usePromptInputAttachments();
+  
+  return (
+    <PromptInputButton
+      onClick={() => attachments.openFileDialog()}
+      disabled={disabled}
+    >
+      <FileIcon />
+      <span>Photos</span>
+    </PromptInputButton>
+  );
+}
 
 /**
- * ChatInputAI - Hybrid input combining AI Elements with custom media features
+ * ChatInputAI - Streamlined input with direct action buttons
  * 
- * This component combines the best of both worlds:
- * - AI Elements PromptInput for modern UX and file attachments
- * - Custom voice recording and speech-to-text components
- * - Media upload with camera capture
- * - Maintains all existing functionality while adding AI SDK features
+ * Features:
+ * - Direct file upload using AI Elements
+ * - Direct camera capture
+ * - Direct voice recording
+ * - Direct speech-to-text
+ * - No modal overlays or nested UI
  */
 
 export function ChatInputAI({
   onSendMessage,
   isLoading = false,
-  maxLength = 1000,
   onNewChat
 }: ChatInputProps): React.JSX.Element {
   
-  const [webSearch, setWebSearch] = useState(false);
-  const [showComponents, setShowComponents] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const webcamRef = useRef<Webcam>(null);
 
   // Handle AI Elements submission
   const handleSubmit = useCallback((message: PromptInputMessage) => {
@@ -106,9 +115,9 @@ export function ChatInputAI({
       content: message.text || 'Sent with attachments',
       type: MessageType.TEXT,
       timestamp: new Date()
-      // TODO: Handle files and webSearch through custom processing
+      // TODO: Handle files through custom processing
     });
-  }, [onSendMessage, webSearch]);
+  }, [onSendMessage]);
 
   // Handle voice recording complete
   const handleVoiceRecordingComplete = useCallback((audioBlob: Blob, duration: number) => {
@@ -126,90 +135,91 @@ export function ChatInputAI({
       }
     });
     
-    setShowComponents(false);
-  }, [onSendMessage]);
-
-  // Handle image upload
-  const handleImageUpload = useCallback((files: File[]) => {
-    files.forEach((file, index) => {
-      const imageUrl = URL.createObjectURL(file);
-      
-      // Send with a slight delay to maintain order
-      setTimeout(() => {
-        onSendMessage({
-          content: `Image: ${file.name}`,
-          type: MessageType.IMAGE,
-          timestamp: new Date(),
-          metadata: {
-            imageUrl,
-            imageAlt: file.name,
-            imageWidth: 0, // Will be set when image loads
-            imageHeight: 0
-          }
-        });
-      }, index * 100);
-    });
-    
-    setShowComponents(false);
+    // Voice recording is handled by the VoiceRecorder component
   }, [onSendMessage]);
 
   // Handle camera capture
-  const handleCameraCapture = useCallback((imageData: string) => {
-    onSendMessage({
-      content: "Camera photo",
-      type: MessageType.IMAGE,
-      timestamp: new Date(),
-      metadata: {
-        imageUrl: imageData,
-        imageAlt: "Camera photo"
-      }
-    });
-    
-    setShowComponents(false);
+  const handleCameraCapture = useCallback(() => {
+    const imageSrc = webcamRef.current?.getScreenshot();
+    if (imageSrc) {
+      onSendMessage({
+        content: "Camera photo",
+        type: MessageType.IMAGE,
+        timestamp: new Date(),
+        metadata: {
+          imageUrl: imageSrc,
+          imageAlt: "Camera photo"
+        }
+      });
+      setShowCamera(false);
+    }
   }, [onSendMessage]);
 
   // Handle speech to text
   const handleSpeechTranscript = useCallback((transcript: string) => {
-    // This would need to be handled differently with AI Elements
-    // For now, we'll just log it
+    // TODO: Integration with AI Elements PromptInputTextarea
+    // This would need to be integrated with the prompt input's text state
     console.log('Speech transcript:', transcript);
   }, []);
 
   const handleFinalSpeechTranscript = useCallback((transcript: string) => {
+    // TODO: Add the final transcript to the textarea
     console.log('Final speech transcript:', transcript);
-    setShowComponents(false);
-  }, []);
+    // For now, we'll submit the transcript as a message
+    if (transcript.trim()) {
+      onSendMessage({
+        content: transcript,
+        type: MessageType.TEXT,
+        timestamp: new Date()
+      });
+    }
+  }, [onSendMessage]);
+
+  // Camera overlay component
+  const CameraOverlay = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Take Photo</h3>
+          <button
+            onClick={() => setShowCamera(false)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ×
+          </button>
+        </div>
+        
+        <div className="relative rounded-lg overflow-hidden bg-gray-900 mb-4">
+          <Webcam
+            ref={webcamRef}
+            audio={false}
+            screenshotFormat="image/jpeg"
+            className="w-full h-64 object-cover"
+          />
+        </div>
+        
+        <div className="flex justify-center space-x-3">
+          <button
+            onClick={() => setShowCamera(false)}
+            className="px-4 py-2 bg-gray-500 hover:bg-gray-600 rounded-lg text-white transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleCameraCapture}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+          >
+            Capture
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex-shrink-0 bg-background">
-      {/* Expandable Menu Panel */}
-      {showComponents && (
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-white dark:bg-[#1E2634] border border-gray-200 dark:border-[#364055] rounded-xl p-3">
-            <div className="flex items-center gap-2">
-              {/* Voice Recording */}
-              <VoiceRecorder
-                onRecordingComplete={handleVoiceRecordingComplete}
-                disabled={isLoading}
-              />
-              
-              {/* Speech to Text */}
-              <SpeechToText
-                onTranscriptChange={handleSpeechTranscript}
-                onFinalTranscript={handleFinalSpeechTranscript}
-                disabled={isLoading}
-              />
-              
-              {/* Media Upload */}
-              <MediaUpload
-                onFilesSelected={handleImageUpload}
-                onCamera={handleCameraCapture}
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Camera Overlay */}
+      {showCamera && <CameraOverlay />}
 
       {/* Main AI Elements Input */}
       <div className="p-4">
@@ -248,32 +258,31 @@ export function ChatInputAI({
               
               <PromptInputFooter>
                 <PromptInputTools>
-                  {/* Custom Media Button */}
+                  {/* Direct File Upload Button */}
+                  <FileUploadButton disabled={isLoading} />
+                  
+                  {/* Direct Camera Button */}
                   <PromptInputButton
-                    variant="ghost"
-                    onClick={() => setShowComponents(!showComponents)}
+                    onClick={() => setShowCamera(true)}
                     disabled={isLoading}
+                    className="flex items-center gap-2 px-3 py-2"
                   >
-                    <PlusIcon />
-                    <span>Media</span>
+                    <CameraIcon />
+                    <span>Camera</span>
                   </PromptInputButton>
                   
-                  {/* File Attachments Menu */}
-                  <PromptInputActionMenu>
-                    <PromptInputActionMenuTrigger />
-                    <PromptInputActionMenuContent>
-                      <PromptInputActionAddAttachments />
-                    </PromptInputActionMenuContent>
-                  </PromptInputActionMenu>
+                  {/* Direct Voice Record Button */}
+                  <VoiceRecorder
+                    onRecordingComplete={handleVoiceRecordingComplete}
+                    disabled={isLoading}
+                  />
                   
-                  {/* Web Search Toggle */}
-                  <PromptInputButton
-                    variant={webSearch ? 'default' : 'ghost'}
-                    onClick={() => setWebSearch(!webSearch)}
-                  >
-                    <GlobeIcon />
-                    <span>Search</span>
-                  </PromptInputButton>
+                  {/* Direct Speech to Text Button */}
+                  <SpeechToText
+                    onTranscriptChange={handleSpeechTranscript}
+                    onFinalTranscript={handleFinalSpeechTranscript}
+                    disabled={isLoading}
+                  />
                 </PromptInputTools>
                 
                 <PromptInputSubmit disabled={isLoading} />
