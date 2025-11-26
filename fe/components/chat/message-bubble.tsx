@@ -73,7 +73,8 @@ export function MessageBubble({
       [MessageStatus.SENT]: "✓",
       [MessageStatus.DELIVERED]: "✓✓",
       [MessageStatus.ERROR]: "❌",
-      [MessageStatus.PROCESSING]: "🔄"
+      [MessageStatus.PROCESSING]: "🔄",
+      [MessageStatus.TRANSCRIBING]: "🎤"
     };
 
     const statusColors = {
@@ -81,7 +82,8 @@ export function MessageBubble({
       [MessageStatus.SENT]: "text-green-400", 
       [MessageStatus.DELIVERED]: "text-green-400",
       [MessageStatus.ERROR]: "text-red-400",
-      [MessageStatus.PROCESSING]: "text-blue-400"
+      [MessageStatus.PROCESSING]: "text-blue-400",
+      [MessageStatus.TRANSCRIBING]: "text-purple-400"
     };
 
     return (
@@ -111,6 +113,22 @@ export function MessageBubble({
     );
   };
 
+  // Ghost content for transcribing messages
+  const renderGhostContent = () => {
+    return (
+      <div className="flex items-center space-x-2">
+        <div className="text-neutral-400 opacity-60 italic text-sm">
+          Transcribing audio...
+        </div>
+        <div className="flex space-x-1">
+          <div className="w-1 h-1 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+          <div className="w-1 h-1 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+          <div className="w-1 h-1 bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        </div>
+      </div>
+    );
+  };
+
   // Message content based on type
   const renderMessageContent = () => {
     // If message is deleted, show deletion notice
@@ -120,6 +138,11 @@ export function MessageBubble({
           This message was deleted
         </div>
       );
+    }
+
+    // Show ghost content for transcribing audio messages
+    if (message.type === MessageType.VOICE && message.status === MessageStatus.TRANSCRIBING) {
+      return renderGhostContent();
     }
 
     switch (message.type) {

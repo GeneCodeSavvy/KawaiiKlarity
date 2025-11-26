@@ -4,6 +4,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { ChatContainerProps, MessageType, MessageStatus, Message } from "@/types/chat";
 import { MessageListAI } from "./message-list-ai";
 import { ChatInputAI } from "./chat-input-ai";
+import { getApiUrl } from "@/lib/utils";
 
 /**
  * ChatContainer - Simplified version using fetch for AI SDK migration
@@ -31,6 +32,7 @@ export function ChatContainer({
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   
   // Load messages from sessionStorage on mount
   useEffect(() => {
@@ -56,8 +58,89 @@ export function ChatContainer({
     }
   }, [messages]);
 
+  // Helper functions for message management
+  const addMessage = useCallback((message: Message) => {
+    setMessages(prev => [...prev, message]);
+    onNewMessage?.(message);
+  }, [onNewMessage]);
+
+  const updateMessage = useCallback((id: string, updates: Partial<Message>) => {
+    setMessages(prev => prev.map(msg => 
+      msg.id === id ? { ...msg, ...updates } : msg
+    ));
+  }, []);
+
+  // Handle audio message transcription
+  const handleAudioMessage = useCallback(async (messageData: any) => {
+    const messageId = crypto.randomUUID();
+    setIsTranscribing(true);
+    setError(null);
+    
+    // 1. Add ghost message immediately
+    const ghostMessage: Message = {
+      id: messageId,
+      content: "",
+      sender: 'user',
+      timestamp: new Date(),
+      type: MessageType.VOICE,
+      status: MessageStatus.TRANSCRIBING,
+      metadata: messageData.metadata
+    };
+    
+    addMessage(ghostMessage);
+
+    try {
+      // 2. Send audio to transcription API
+      const formData = new FormData();
+      formData.append('audio', messageData.audioBlob, 'recording.webm');
+      formData.append('messageId', messageId);
+
+      const response = await fetch(getApiUrl('/api/transcribe'), {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Transcription failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      // 3. Update message with transcription
+      updateMessage(messageId, {
+        content: result.transcription,
+        status: MessageStatus.DELIVERED
+      });
+
+      // 4. Continue with existing AI flow for bot response
+      setTimeout(() => {
+        handleSendMessage({
+          content: result.transcription,
+          type: MessageType.TEXT
+        });
+      }, 500);
+
+    } catch (error) {
+      console.error('Transcription error:', error);
+      setError(error instanceof Error ? error.message : 'Transcription failed');
+      
+      // Update message to show error
+      updateMessage(messageId, {
+        content: "Failed to transcribe audio",
+        status: MessageStatus.ERROR
+      });
+    } finally {
+      setIsTranscribing(false);
+    }
+  }, [addMessage, updateMessage]);
+
   // Send message function using AI SDK API
   const handleSendMessage = useCallback(async (messageData: any) => {
+    // Handle audio messages differently
+    if (messageData.type === MessageType.VOICE && messageData.audioBlob) {
+      return handleAudioMessage(messageData);
+    }
+
     if (!messageData.content?.trim()) return;
 
     const newMessage: Message = {
@@ -80,7 +163,7 @@ export function ChatContainer({
 
     try {
       // Call AI SDK API
-      const response = await fetch('/api/chat', {
+      const response = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +218,7 @@ export function ChatContainer({
     } finally {
       setIsLoading(false);
     }
-  }, [messages, onNewMessage]);
+  }, [messages, onNewMessage, handleAudioMessage]);
 
   // Clear chat history
   const clearHistory = useCallback(() => {
@@ -188,7 +271,7 @@ export function ChatContainer({
       <div className="flex-1 min-h-0">
         <MessageListAI
           messages={messages}
-          isLoading={isLoading}
+          isLoading={isLoading || isTranscribing}
           autoScroll={true}
           onDeleteMessage={handleDeleteMessage}
         />
@@ -198,7 +281,7 @@ export function ChatContainer({
       <div className="flex-shrink-0">
         <ChatInputAI
           onSendMessage={handleSendMessage}
-          isLoading={isLoading}
+          isLoading={isLoading || isTranscribing}
           placeholder="Type your message... (Shift+Enter for new line)"
           maxLength={1000}
           onNewChat={clearHistory}

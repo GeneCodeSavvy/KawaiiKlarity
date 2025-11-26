@@ -56,7 +56,7 @@ export interface ProgressCallback {
 }
 
 // API base URL (to be configured based on environment)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
 
 /**
  * Upload voice message and get transcription + AI response

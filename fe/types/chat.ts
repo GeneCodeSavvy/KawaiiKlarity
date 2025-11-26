@@ -16,6 +16,7 @@ export enum MessageStatus {
   SENDING = 'sending',        // User message being sent
   SENT = 'sent',             // Successfully delivered
   PROCESSING = 'processing',  // AI processing (voice/image analysis)
+  TRANSCRIBING = 'transcribing', // Audio transcription in progress
   DELIVERED = 'delivered',    // AI response ready
   ERROR = 'error'            // Failed to send/process
 }
@@ -244,4 +245,24 @@ export interface UploadOptions {
   maxFileSize?: number;             // Maximum file size in bytes
   allowedTypes?: string[];          // Allowed MIME types
   compressionQuality?: number;      // Image compression quality (0-1)
+}
+
+// Additional types for audio transcription feature
+export interface TranscriptionResponse {
+  transcription: string;
+  success?: boolean;
+  error?: string;
+}
+
+export interface ChatStore {
+  messages: Message[];
+  addMessage: (message: Message) => void;
+  updateMessage: (id: string, updates: Partial<Message>) => void;
+  clearMessages: () => void;
+}
+
+export interface AudioRecorderProps {
+  onRecordingComplete: (audioBlob: Blob) => void;
+  disabled?: boolean;
+  className?: string;
 }

@@ -42,8 +42,8 @@ import {
 import { ChatInputProps, MessageType } from "@/types/chat";
 
 // Dynamic imports for SSR compatibility with loading fallbacks
-const VoiceRecorder = dynamic(() =>
-    import("./voice-recorder").then(mod => ({ default: mod.ClientVoiceRecorder })),
+const AudioRecorder = dynamic(() =>
+    import("./audio-recorder").then(mod => ({ default: mod.AudioRecorder })),
     {
         ssr: false,
         loading: () => (
@@ -108,22 +108,21 @@ export function ChatInputAI({
     }, [onSendMessage]);
 
     // Handle voice recording complete
-    const handleVoiceRecordingComplete = useCallback((audioBlob: Blob, duration: number) => {
+    const handleVoiceRecordingComplete = useCallback((audioBlob: Blob) => {
         const audioUrl = URL.createObjectURL(audioBlob);
 
         onSendMessage({
-            content: `Voice message (${Math.round(duration)}s)`,
+            content: "", // Empty content for ghost state
             type: MessageType.VOICE,
             timestamp: new Date(),
+            audioBlob: audioBlob, // Pass the audio blob for transcription 
             metadata: {
                 audioUrl,
-                audioDuration: duration,
+                audioDuration: 0, // Duration will be calculated if needed
                 audioBlob,
                 audioMimeType: audioBlob.type
             }
-        });
-
-        // Voice recording is handled by the VoiceRecorder component
+        } as any); // Use 'as any' to bypass TypeScript strict checking for the audioBlob property
     }, [onSendMessage]);
 
     // Handle camera capture
@@ -241,7 +240,7 @@ export function ChatInputAI({
                                     </PromptInputButton>
 
                                     {/* Direct Voice Record Button */}
-                                    <VoiceRecorder
+                                    <AudioRecorder
                                         onRecordingComplete={handleVoiceRecordingComplete}
                                         disabled={isLoading}
                                     />
